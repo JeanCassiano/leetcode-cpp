@@ -1,7 +1,3 @@
-# leetcode-cpp
-
-A curated collection of C++ solutions to LeetCode problems, focused on clarity, performance, and strong engineering practices.
-
 ## Overview
 
 This repository serves as a personal knowledge base and reference for solving algorithmic and data structure problems using modern C++. Each solution is written with attention to:
