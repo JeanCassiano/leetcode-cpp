@@ -135,19 +135,18 @@ ThreadPool::~ThreadPool() {
 std::mutex print_mutex;
 
 int main() {
-    {
-        ThreadPool pool(4);
-
-        // Fire-and-forget tasks (void return)
-        for (int i = 0; i < 5; i++) {
-            pool.enqueue([i]() {
-                std::unique_lock<std::mutex> lock(print_mutex);
-                std::cout << "Task " << i
-                        << " running on thread " << std::this_thread::get_id() << "\n";
-            });
-        }
-    }
     ThreadPool pool(4);
+
+    // Fire-and-forget tasks (void return)
+    std::vector<std::future<void>> void_futures;
+    for (int i = 0; i < 5; i++) {
+        void_futures.push_back(pool.enqueue([i]() {
+            std::unique_lock<std::mutex> lock(print_mutex);
+            std::cout << "Task " << i
+                      << " running on thread " << std::this_thread::get_id() << "\n";
+        }));
+    }
+    for (auto& f : void_futures) f.get();
     // Tasks with return values via std::future
     std::vector<std::future<int>> futures;
     for (int i = 0; i < 10; i++) {
