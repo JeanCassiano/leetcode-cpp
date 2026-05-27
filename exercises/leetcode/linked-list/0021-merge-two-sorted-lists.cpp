@@ -41,7 +41,8 @@ public:
     ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
         ListNode dummy(0);
         ListNode* tail = &dummy;
-
+        // we use the dummy here to simplify the first node
+        // then we just return the dummy.next
         while (list1 != nullptr && list2 != nullptr) {
             if (list1->val <= list2->val) {
                 tail->next = list1;

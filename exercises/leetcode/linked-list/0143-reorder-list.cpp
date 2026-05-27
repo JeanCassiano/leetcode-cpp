@@ -43,29 +43,35 @@ struct ListNode {
 class Solution {
 public:
     void reorderList(ListNode* head) {
+        // recursive algorithm to reorder the list
         head = rec(head, head->next);
     }
 
 private:
     ListNode* rec(ListNode* root, ListNode* cur) {
+
+        // in case we finish the list
         if (cur == nullptr) {
             return root;
         }
 
+        // we progress through the list, going until the last element
+        // where we have: root = first element, cur = last element
         root = rec(root, cur->next);
 
+        // condition to stop (we already finish and we need to stop the recursion)
         if (root == nullptr) {
             return nullptr;
         }
-
+        // aux node
         ListNode* tmp = nullptr;
 
         if (root == cur || root->next == cur) {
             cur->next = nullptr;
-        } else {
+        } else { // we store the next element of the root, then we make the current element the next of the root, and the old next element, the next element of the cur
             tmp = root->next;
             root->next = cur;
-            cur->next = tmp;
+            cur->next = tmp; // this store the next root (where we are going to swap)
         }
 
         return tmp;

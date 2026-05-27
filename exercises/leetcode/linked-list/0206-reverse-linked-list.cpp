@@ -41,13 +41,14 @@ public:
         ListNode* prev = nullptr;
         ListNode* curr = head;
         ListNode* next = nullptr;
-
+        // here we compare curr and not curr->next, because this would skip the last element
         while (curr != nullptr) {
             next = curr->next;
             curr->next = prev;
             prev = curr;
             curr = next;
         }
+        // we return prev, given that curr, is a nullptr in this moment
 
         return prev;
     }

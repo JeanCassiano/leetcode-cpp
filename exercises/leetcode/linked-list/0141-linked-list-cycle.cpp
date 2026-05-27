@@ -40,7 +40,7 @@ public:
     bool hasCycle(ListNode* head) {
         ListNode* slow = head;
         ListNode* fast = head;
-
+        // that way, we can access every node until the last one
         while (fast != nullptr && fast->next != nullptr) {
             fast = fast->next->next;
             slow = slow->next;
