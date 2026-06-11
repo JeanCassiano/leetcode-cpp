@@ -3,19 +3,21 @@
 // Difficulty: Medium
 //
 // Approach:
-// We use the properties of preorder and inorder traversals to reconstruct the tree.
+// We use two pointers (preIdx and inIdx) to traverse preorder and inorder arrays.
 // - Preorder: root, left subtree, right subtree
 // - Inorder: left subtree, root, right subtree
 //
 // - The first element in preorder is always the root.
-// - Find the root in inorder to divide left and right subtrees.
-// - Calculate the size of the left subtree.
-// - Recursively build left subtree using the next preStart + 1.
-// - Recursively build right subtree using preStart + leftSize + 1.
+// - Use a limit parameter to know when to stop building a subtree.
+// - When we encounter the limit in inorder, we know the subtree is complete.
+// - Build left subtree with the current root value as the limit.
+// - Build right subtree with the original limit.
 //
-// Time Complexity: O(n^2)
+// This approach avoids searching for the root in inorder, making it more efficient.
+//
+// Time Complexity: O(n)
 //   - n = number of nodes in the tree
-//   - Finding the root position in inorder takes O(n) for each node
+//   - Each node is processed once
 //
 // Space Complexity: O(h)
 //   - h = height of the tree
@@ -23,6 +25,7 @@
 
 #include <iostream>
 #include <vector>
+#include <climits>
 
 using namespace std;
 
@@ -40,35 +43,30 @@ struct TreeNode {
 };
 
 class Solution {
-public:
-    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
-        return build(preorder, 0, inorder, 0, inorder.size() - 1);
-    }
-
 private:
-    TreeNode* build(vector<int>& pre, int preStart,
-                    vector<int>& in, int inStart, int inEnd) {
-        if (inStart > inEnd) return nullptr;
+    int preIdx = 0;
+    int inIdx = 0;
 
-        // The first element in preorder is the root
-        TreeNode* root = new TreeNode(pre[preStart]);
-
-        // Find the root position in inorder
-        int mid = 0;
-        for (int i = inStart; i <= inEnd; i++) {
-            if (in[i] == root->val) {
-                mid = i;
-                break;
-            }
+    TreeNode* dfs(vector<int>& preorder, vector<int>& inorder, int limit) {
+        // Base case: reached end of preorder or found the limit in inorder
+        if (preIdx >= preorder.size()) return nullptr;
+        if (inorder[inIdx] == limit) {
+            inIdx++;
+            return nullptr;
         }
 
-        // Calculate the size of the left subtree
-        int leftSize = mid - inStart;
-
-        // Recursively build left and right subtrees
-        root->left = build(pre, preStart + 1, in, inStart, mid - 1);
-        root->right = build(pre, preStart + leftSize + 1, in, mid + 1, inEnd);
+        // Create node from current preorder element
+        TreeNode* root = new TreeNode(preorder[preIdx++]);
+        // Build left subtree with current root value as limit
+        root->left = dfs(preorder, inorder, root->val);
+        // Build right subtree with original limit
+        root->right = dfs(preorder, inorder, limit);
 
         return root;
+    }
+
+public:
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        return dfs(preorder, inorder, INT_MAX);
     }
 };
